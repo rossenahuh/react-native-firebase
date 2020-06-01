@@ -31,7 +31,7 @@ public class RNFirebaseMessagingService extends FirebaseMessagingService {
   @Override
   public void onNewToken(String token) {
     Log.d(TAG, "onNewToken event received");
-
+    QG.logFcmId(getApplicationContext());
     Intent newTokenEvent = new Intent(NEW_TOKEN_EVENT);
     LocalBroadcastManager
       .getInstance(this)
@@ -58,6 +58,14 @@ public class RNFirebaseMessagingService extends FirebaseMessagingService {
         intent.setAction("QG");
         intent.putExtras(qgData);
         JobIntentService.enqueueWork(context, NotificationJobIntentService.class, 1000, intent);
+
+        // aiqua notification data가 js handler로 들어오게끔 처리
+        Intent notificationEvent = new Intent(REMOTE_NOTIFICATION_EVENT);
+        notificationEvent.putExtra("notification", message);
+        LocalBroadcastManager
+          .getInstance(this)
+          .sendBroadcast(notificationEvent);
+
         return;
     } else {
     	// handle fcm message from other services

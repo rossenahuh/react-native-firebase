@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.RemoteInput;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.app.RemoteInput;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
@@ -22,6 +22,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.google.firebase.messaging.RemoteMessage;
+import com.quantumgraph.sdk.QG;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -355,6 +356,27 @@ public class RNFirebaseNotifications extends ReactContextBaseJavaModule implemen
 
     WritableMap notificationMap = Arguments.createMap();
     WritableMap dataMap = Arguments.createMap();
+
+    // aiqua notification은 별도 처리
+    Map data = message.getData();
+
+    if (data.containsKey("message") && QG.isQGMessage(data.get("message").toString())) {
+      notificationMap.putString("body", "");
+      notificationMap.putString("notificationId", "");
+      notificationMap.putString("sound", "");
+      notificationMap.putString("title", "");
+
+      if (message.getData() != null) {
+        for (Map.Entry<String, String> e : message
+          .getData()
+          .entrySet()) {
+          dataMap.putString(e.getKey(), e.getValue());
+        }
+      }
+      notificationMap.putMap("data", dataMap);
+
+      return notificationMap;
+    }
 
     // Cross platform notification properties
     String body = getNotificationBody(notification);
