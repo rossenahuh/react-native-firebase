@@ -5,6 +5,7 @@
 #import "RNFirebaseMessaging.h"
 #import "RNFirebaseUtil.h"
 #import <React/RCTUtils.h>
+#import "QGSdk.h"
 
 // For iOS 10 we need to implement UNUserNotificationCenterDelegate to receive display
 // notifications via APNS
@@ -202,7 +203,10 @@ RCT_EXPORT_METHOD(complete:(NSString*)handlerKey fetchResult:(UIBackgroundFetchR
             event = NOTIFICATIONS_NOTIFICATION_RECEIVED;
         }
     } else {
-        // Triggered by `notifications().displayNotification(notification)`
+        // Triggered by `notifications().displayNotification(notification)
+        
+        // aiqua notification display event
+        [[QGSdk getSharedInstance] userNotificationCenter:center willPresentNotification:notification];
         // Display the notification
         options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
         // notification_displayed
@@ -221,8 +225,11 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 #else
          withCompletionHandler:(void(^)())completionHandler NS_AVAILABLE_IOS(10_0) {
 #endif
+    // aiqua notification clicked event
+    [[QGSdk getSharedInstance] userNotificationCenter:center didReceiveNotificationResponse:response];
+
      NSDictionary *message = [self parseUNNotificationResponse:response];
-           
+
      NSString *handlerKey = message[@"notification"][@"notificationId"];
 
      [self sendJSEvent:self name:NOTIFICATIONS_NOTIFICATION_OPENED body:message];
