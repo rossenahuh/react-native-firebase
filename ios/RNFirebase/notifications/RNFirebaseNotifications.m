@@ -5,7 +5,7 @@
 #import "RNFirebaseMessaging.h"
 #import "RNFirebaseUtil.h"
 #import <React/RCTUtils.h>
-#import "QGSdk.h"
+#import <Appier/Appier.h>
 
 // For iOS 10 we need to implement UNUserNotificationCenterDelegate to receive display
 // notifications via APNS

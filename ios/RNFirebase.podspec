@@ -17,6 +17,8 @@ Pod::Spec.new do |s|
   s.source_files        = 'RNFirebase/**/*.{h,m}'
   s.dependency          'React'
   s.dependency          'Firebase/Core'
+  s.dependency          'AppierFramework', '7.3.0'
+  
   s.subspec 'Crashlytics' do |cs|
     cs.dependency 'Fabric'
     cs.dependency 'Crashlytics'
