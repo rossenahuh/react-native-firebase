@@ -180,17 +180,36 @@ RCT_EXPORT_METHOD(complete:(NSString*)handlerKey fetchResult:(UIBackgroundFetchR
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler NS_AVAILABLE_IOS(10_0) {
+    UNNotificationTrigger *trigger = notification.request.trigger;
+    BOOL isFcm = trigger && [notification.request.trigger class] == [UNPushNotificationTrigger class];
+    BOOL isScheduled = trigger && [notification.request.trigger class] == [UNCalendarNotificationTrigger class];
     NSString *event;
     UNNotificationPresentationOptions options;
     NSDictionary *message = [self parseUNNotification:notification];
+    if (isFcm || isScheduled) {
+        // If app is in the background
+        if (RCTSharedApplication().applicationState == UIApplicationStateBackground
+            || RCTSharedApplication().applicationState == UIApplicationStateInactive) {
+            // display the notification
+            options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
+            // notification_displayed
+            event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
+        } else {
+            // don't show notification
+            options = UNNotificationPresentationOptionNone;
+            // notification_received
+            event = NOTIFICATIONS_NOTIFICATION_RECEIVED;
+        }
+    } else {
+        // Triggered by `notifications().displayNotification(notification)`
+        // Display the notification
+        options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
+        // notification_displayed
+        event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
         
-    // aiqua notification display event
-    [[QGSdk getSharedInstance] userNotificationCenter:center willPresentNotification:notification];
-    // Display the notification
-    options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
-    // notification_displayed
-    event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
-
+        // aiqua display event
+        [[QGSdk getSharedInstance] userNotificationCenter:center willPresentNotification:notification];
+    }
     [self sendJSEvent:self name:event body:message];
     completionHandler(options);
 }
