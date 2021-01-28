@@ -296,7 +296,7 @@ public class RNFirebaseNotifications extends ReactContextBaseJavaModule implemen
   }
 
   private WritableMap parseIntentForLocalNotification(Intent intent) {
-    if (intent.getExtras() == null || !intent.hasExtra("notificationId")) {
+    if (intent.getExtras() == null) {
       return null;
     }
 

@@ -49,6 +49,7 @@ export default class Notification {
       this._sound = nativeNotification.sound;
       this._subtitle = nativeNotification.subtitle;
       this._title = nativeNotification.title;
+      this._aiquaData = { feed_id: nativeNotification.feed_id || null };
     }
 
     this._android = new AndroidNotification(
@@ -166,11 +167,11 @@ export default class Notification {
   }
 
   build(): NativeNotification {
-    if (!this._notificationId) {
-      throw new Error(
-        'Notification: Missing required `notificationId` property'
-      );
-    }
+    // if (!this._notificationId) {
+    //   throw new Error(
+    //     'Notification: Missing required `notificationId` property'
+    //   );
+    // }
 
     return {
       android: Platform.OS === 'android' ? this._android.build() : undefined,
@@ -181,6 +182,7 @@ export default class Notification {
       sound: this._sound,
       subtitle: this._subtitle,
       title: this._title,
+      aiquaData: this._aiquaData,
     };
   }
 }
