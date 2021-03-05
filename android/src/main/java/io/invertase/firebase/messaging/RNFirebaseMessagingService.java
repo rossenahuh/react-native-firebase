@@ -42,6 +42,11 @@ public class RNFirebaseMessagingService extends FirebaseMessagingService {
   public void onMessageReceived(RemoteMessage message) {
     Log.d(TAG, "onMessageReceived event received");
 
+    // Solving Android uninstall push notification not being silent
+    if(message.getData().containsKey("af-uinstall-tracking")){
+      return;
+    }
+
     // AIQUA message handle
     String from = message.getFrom();
     Map data = message.getData();
