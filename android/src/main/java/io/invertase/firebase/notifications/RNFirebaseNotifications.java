@@ -99,7 +99,7 @@ public class RNFirebaseNotifications extends ReactContextBaseJavaModule implemen
     WritableMap notificationOpenMap = null;
     if (getCurrentActivity() != null) {
       
-      if(getCurrentActivity().getIntent().getAction().equals("android.intent.action.VIEW")) {
+      if(getCurrentActivity().getIntent().getAction()!= null && getCurrentActivity().getIntent().getAction().equals("android.intent.action.VIEW")) {
         if(getCurrentActivity().getIntent().getData() != null) {
           if(getCurrentActivity().getIntent().getData().getHost().contains("connecting.onelink.me")) {
             promise.resolve(null);
