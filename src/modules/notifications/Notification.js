@@ -49,7 +49,7 @@ export default class Notification {
       this._sound = nativeNotification.sound;
       this._subtitle = nativeNotification.subtitle;
       this._title = nativeNotification.title;
-      this._aiquaData = { feed_id: nativeNotification.feed_id || null };
+      this._aiquaData = { ...nativeNotification };
     }
 
     this._android = new AndroidNotification(
